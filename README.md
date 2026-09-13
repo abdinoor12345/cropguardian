@@ -13,6 +13,15 @@ CropGuardian is an agronomic early-warning dashboard for monitoring crop microcl
 - Dynamic crop catalog served from the backend, including crop-specific growth stages.
 - Simple field risk map that colors demo plots by current rule-engine risk.
 
+## Why It Matters
+
+CropGuardian helps farmers turn weather observations into timely field decisions. It is designed to:
+
+- Detect disease risk early before crop damage spreads.
+- Avoid wasted spraying by checking rain, wind, heat, and humidity conditions before chemical application.
+- Protect yield by prioritizing the most urgent field risks and recommended interventions.
+- Adapt to climate variability by combining current telemetry, short-term forecasting, and AI-supported agronomic guidance.
+
 ## Tech Stack
 
 - Frontend: React, Vite, JavaScript, Tailwind-style utility classes.
