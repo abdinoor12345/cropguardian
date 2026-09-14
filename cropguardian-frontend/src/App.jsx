@@ -10,6 +10,19 @@ import Simulation from "./components/simulation";
 import AIAssistant from "./components/AIAssistant";
 import ForecastPanel from "./components/ForecastPanel";
 import FieldRiskMap from "./components/FieldRiskMap";
+import LandingHero from "./components/LandingHero";
+import ImpactStrip from "./components/ImpactStrip";
+
+function AppFooter() {
+  return (
+    <footer className="mx-auto w-full max-w-7xl px-4 pb-6 md:px-8">
+      <div className="flex flex-col gap-2 border-t border-stone-200 pt-4 text-xs text-[#5c6b60] sm:flex-row sm:items-center sm:justify-between">
+        <span className="font-bold text-[#1b3a2b]">CropGuardian</span>
+        <span>JKUAT Conduit climate intelligence for timely crop decisions.</span>
+      </div>
+    </footer>
+  );
+}
 
 export default function App() {
   const [cropType, setCropType] = useState("Maize");
@@ -27,49 +40,37 @@ export default function App() {
       ) : activePath === "/ai-assistant" ? (
         <AIAssistant />
       ) : (
-        <main className="mx-auto max-w-7xl p-6 md:p-8 space-y-6">
-          {/* Prominent Top Banner: Current Environmental Conditions */}
-          <section className="w-full rounded-xl bg-white p-6 shadow-sm border border-stone-200">
-            <CurrentConditions />
-          </section>
+        <main className="mx-auto max-w-7xl space-y-6 p-4 md:p-8">
+          <LandingHero cropType={cropType} growthStage={growthStage} />
 
-          <ForecastPanel />
-
-          {/* Core Dashboard Grid System */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left Column: Crop Configuration & Active Alerts (5/12 width) */}
-            <div className="lg:col-span-5 flex flex-col gap-6">
-              <div className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
-                <CropSelector
-                  cropType={cropType}
-                  growthStage={growthStage}
-                  onCropChange={setCropType}
-                  onStageChange={setGrowthStage}
-                />
-              </div>
-
-              <div className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
-                <AlertsPanel cropType={cropType} growthStage={growthStage} />
-              </div>
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+            <div className="space-y-6 xl:col-span-4">
+              <CurrentConditions />
+              <CropSelector
+                cropType={cropType}
+                growthStage={growthStage}
+                onCropChange={setCropType}
+                onStageChange={setGrowthStage}
+              />
+              <ForecastPanel />
             </div>
 
-            {/* Right Column: AI Insights & Simulation Controls (7/12 width) */}
-            <div className="lg:col-span-7 flex flex-col gap-6">
-              <div className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
-                <AdvisorPanel cropType={cropType} growthStage={growthStage} />
-              </div>
+            <div className="space-y-6 xl:col-span-4">
+              <AlertsPanel cropType={cropType} growthStage={growthStage} />
+              <Simulation />
+            </div>
 
-              <div className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
-                <FieldRiskMap />
-              </div>
-
-              <div className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
-                <Simulation />
-              </div>
+            <div className="space-y-6 xl:col-span-4">
+              <AdvisorPanel cropType={cropType} growthStage={growthStage} />
+              <FieldRiskMap />
             </div>
           </div>
+
+          <ImpactStrip />
         </main>
       )}
+
+      <AppFooter />
     </div>
   );
 }

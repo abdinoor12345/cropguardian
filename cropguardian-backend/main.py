@@ -302,8 +302,13 @@ def read_advisory_log():
     if not ADVISORY_LOG_FILE.exists():
         return []
 
-    with ADVISORY_LOG_FILE.open() as logfile:
-        raw_entries = json.load(logfile)
+    try:
+        with ADVISORY_LOG_FILE.open() as logfile:
+            raw_entries = json.load(logfile)
+    except json.JSONDecodeError:
+        backup_file = ADVISORY_LOG_FILE.with_suffix(".corrupt.json")
+        ADVISORY_LOG_FILE.replace(backup_file)
+        return []
 
     return [AdvisoryLogEntry.model_validate(entry) for entry in raw_entries]
 
@@ -311,8 +316,10 @@ def read_advisory_log():
 def write_advisory_log(entries):
     ADVISORY_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
     payload = [entry.model_dump(mode="json") for entry in entries]
-    with ADVISORY_LOG_FILE.open("w") as logfile:
+    temp_file = ADVISORY_LOG_FILE.with_suffix(".tmp")
+    with temp_file.open("w") as logfile:
         json.dump(payload, logfile, indent=2)
+    temp_file.replace(ADVISORY_LOG_FILE)
 
 
 def build_intervention_outcomes(advisory: AIAdvisoryResponse):
