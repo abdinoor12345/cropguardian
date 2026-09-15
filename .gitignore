@@ -8,6 +8,9 @@ __pycache__/
 venv/
 env/
 *.egg-info/
+.python/
+cropguardian-backend/venv-python313-backup/
+venv-python313-backup/
 
 # Environment and secrets
 .env
@@ -24,10 +27,12 @@ yarn-error.log*
 
 # Local data and generated logs
 cropguardian-backend/data/advisory_log.json
+cropguardian-backend/data/advisory_log.corrupt.json
+cropguardian-backend/models/conduit-forecaster/adaptive-dataset.jsonl
+cropguardian-backend/models/conduit-forecaster/adaption-model/
 *.log
 
 # OS / editor
 .DS_Store
 .idea/
 .vscode/
-
