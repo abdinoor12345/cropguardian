@@ -16,15 +16,22 @@ const LEVEL_TEXT = {
 };
 
 const BASE_PLOTS = [
-  { id: "A1", label: "A1", crop: "Maize", x: "8%", y: "12%", w: "18%", h: "26%", rotate: "3deg", factor: "fungal_risk" },
-  { id: "A2", label: "A2", crop: "Tomato", x: "31%", y: "9%", w: "17%", h: "28%", rotate: "5deg", factor: "heat_stress" },
-  { id: "A3", label: "A3", crop: "Beans", x: "52%", y: "13%", w: "18%", h: "25%", rotate: "-6deg", factor: "soil_washout" },
-  { id: "B1", label: "B1", crop: "Coffee", x: "12%", y: "47%", w: "20%", h: "31%", rotate: "-4deg", factor: "soil_washout" },
-  { id: "B2", label: "B2", crop: "Potato", x: "38%", y: "45%", w: "18%", h: "34%", rotate: "4deg", factor: "fungal_risk" },
-  { id: "B3", label: "B3", crop: "Kale", x: "62%", y: "45%", w: "20%", h: "34%", rotate: "-2deg", factor: "heat_stress" },
+  { id: "A1", label: "A1", crop: "Maize", x: "8%", y: "12%", w: "18%", h: "26%", rotate: "3deg", factor: "fungal_risk", modifier: 0.9, context: "Open canopy", action: "Scout leaves after the next humid period." },
+  { id: "A2", label: "A2", crop: "Tomato", x: "31%", y: "9%", w: "17%", h: "28%", rotate: "5deg", factor: "heat_stress", modifier: 1.15, context: "South-facing slope", action: "Check irrigation during the cooler part of the day." },
+  { id: "A3", label: "A3", crop: "Beans", x: "52%", y: "13%", w: "18%", h: "25%", rotate: "-6deg", factor: "soil_washout", modifier: 1.2, context: "Low drainage", action: "Inspect runoff channels before the next rain event." },
+  { id: "B1", label: "B1", crop: "Coffee", x: "12%", y: "47%", w: "20%", h: "31%", rotate: "-4deg", factor: "soil_washout", modifier: 0.8, context: "Terraced block", action: "Check terrace edges and exposed roots." },
+  { id: "B2", label: "B2", crop: "Potato", x: "38%", y: "45%", w: "18%", h: "34%", rotate: "4deg", factor: "fungal_risk", modifier: 1.25, context: "Dense canopy", action: "Scout lower leaves and improve airflow." },
+  { id: "B3", label: "B3", crop: "Kale", x: "62%", y: "45%", w: "20%", h: "34%", rotate: "-2deg", factor: "heat_stress", modifier: 1.05, context: "Wind-exposed edge", action: "Check wilting and support exposed plants." },
 ];
 
 function getOverallLevel(score) {
+  if (score >= 80) return "CRITICAL";
+  if (score >= 60) return "HIGH";
+  if (score >= 35) return "MODERATE";
+  return "LOW";
+}
+
+function getPlotLevel(score) {
   if (score >= 80) return "CRITICAL";
   if (score >= 60) return "HIGH";
   if (score >= 35) return "MODERATE";
@@ -36,10 +43,10 @@ function buildPlots(assessment) {
     return BASE_PLOTS.map((plot) => ({ ...plot, level: "LOW", score: 0 }));
   }
 
-  return BASE_PLOTS.map((plot, index) => {
+  return BASE_PLOTS.map((plot) => {
     const factor = assessment[plot.factor];
-    const level = factor?.level || getOverallLevel(assessment.risk_score);
-    const score = Math.min(100, Math.max(0, (factor?.score || assessment.risk_score) + index * 2 - 5));
+    const score = Math.min(100, Math.max(0, (factor?.score || assessment.risk_score) * plot.modifier));
+    const level = getPlotLevel(score);
 
     return { ...plot, level, score };
   });
@@ -150,8 +157,7 @@ export default function FieldRiskMap() {
         </div>
 
         <p className="mt-1 text-sm text-[#5c6b60]">
-          Use this as a simple visual layer for showing which field blocks need
-          scouting or farmer alerts first.
+          {selectedPlot.context}. {selectedPlot.action}
         </p>
       </div>
     </section>

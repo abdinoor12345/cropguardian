@@ -57,7 +57,7 @@ export default function App() {
 
             <div className="space-y-6 xl:col-span-4">
               <AlertsPanel cropType={cropType} growthStage={growthStage} />
-              <Simulation />
+              <Simulation cropType={cropType} growthStage={growthStage} />
             </div>
 
             <div className="space-y-6 xl:col-span-4">

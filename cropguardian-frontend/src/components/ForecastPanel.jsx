@@ -88,6 +88,15 @@ function RiskChip({ label, factor }) {
   );
 }
 
+function strongestForecastDriver(assessment) {
+  const drivers = [
+    ["Fungal pressure", assessment.fungal_risk],
+    ["Heat stress", assessment.heat_stress],
+    ["Soil washout", assessment.soil_washout],
+  ];
+  return drivers.sort((left, right) => right[1].score - left[1].score)[0];
+}
+
 function FieldRows() {
   return (
     <div className="grid grid-cols-6 gap-1.5" aria-hidden="true">
@@ -152,6 +161,7 @@ export default function ForecastPanel() {
   const telemetry = forecast.predicted_telemetry;
   const assessment = forecast.predicted_assessment;
   const sourceTime = formatSourceTime(telemetry.timestamp);
+  const [driverLabel, driver] = strongestForecastDriver(assessment);
 
   return (
     <section className="overflow-hidden rounded-xl border border-[#d6dfc6] bg-white shadow-sm">
@@ -223,6 +233,14 @@ export default function ForecastPanel() {
               - {assessment.spraying_suitability.reason}
             </span>
           </p>
+          <div className="mt-3 border-t border-[#eadfca] pt-3">
+            <p className="m-0 text-xs font-bold uppercase text-[#7b5b16]">
+              Why this forecast matters
+            </p>
+            <p className="m-0 mt-1 text-sm leading-snug text-[#4a4a44]">
+              {driverLabel} is the strongest projected driver at {driver.score.toFixed(0)}/100. {assessment.alerts[0] || driver.description}
+            </p>
+          </div>
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-3">
